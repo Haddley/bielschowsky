@@ -455,7 +455,7 @@
   <div class="stage">
     <div class="card">
       <h2>The eyes, seen from in front</h2>
-      <p class="sub" id="headSub">Each iris carries a marker &mdash; faint where it <em>should</em> sit, solid where it does. The right eye also rides <em>up</em>: same failing muscle, second consequence.</p>
+      <p class="sub" id="headSub">Each iris carries a marker &mdash; faint where it <em>should</em> sit, solid where it does. The right eye also rides <em>up</em>, and drifts a little <em>toward the nose</em>: same failing muscle, second and third consequences. Both are drawn <em>life size</em> &mdash; a few pixels, because that is what a few degrees is on an eye this big. The dashed references are what make them readable; the figures beside the eye are the measurement.</p>
       <canvas id="head" width="700" height="460" role="img"
               aria-label="Front view of a head rolling side to side, with both eyes' torsional orientation marked"></canvas>
       <div class="legend">
@@ -586,8 +586,10 @@
       <div class="bar"><div class="fill horiz" id="b-horiz"></div><div class="unknown" id="u-horiz"></div></div>
       <p class="comp-note">
         <span class="chip weak">Barely measured</span>
-        Around 1&thinsp;&Delta;, and inconsistent &mdash; 0.61, 2.48 and 0.00
-        across the same three runs. Small enough that it may be nothing at all.
+        Around 1&thinsp;&Delta; <b>base-out</b> &mdash; the eye drifts toward the
+        nose, because the muscle covering for the palsy also adducts. And
+        inconsistent: 0.61, 2.48 and 0.00 across the same three runs. Small
+        enough that it may be nothing at all.
       </p>
     </div>
 
@@ -697,9 +699,13 @@
       one. That is the mechanism behind Bielschowsky&rsquo;s head-tilt test, and
       it is drawn in the first panel: the right eye&rsquo;s <em>pupil</em> rides up
       inside a globe that stays put, which is what a hypertropia actually looks
-      like. The displacement is exaggerated a little so a few degrees registers
-      at all &mdash; the panel prints the exaggeration and the true figure in
-      prism dioptres beside the arrow.
+      like. It slides a little toward the nose at the same time, because the
+      same muscle also adducts. Both are drawn <strong>at true scale</strong>:
+      there was a 2&times; magnification here to make the rise easier to see, and
+      it has been removed, because a drawing that magnifies one axis is no longer
+      a drawing of the measurement. A few degrees on a 27-pixel eye is a few
+      pixels, so the panel prints the figures in prism dioptres &mdash; up and
+      in &mdash; beside the arrow.
     </p>
     <p>
       <strong>That half is a prediction.</strong> The <span class="num">8&thinsp;&Delta;</span>
@@ -711,13 +717,25 @@
       nothing more, which is why it is drawn hatched wherever it appears.
     </p>
     <p>
-      As for sideways — there is almost nothing to draw. The horizontal
-      correction came out around <span class="num">1&thinsp;&Delta;</span> and
-      inconsistently: <span class="num">0.61</span>,
-      <span class="num">2.48</span>, <span class="num">0.00</span> across the
-      same three runs. Small enough that it may be nothing at all, so the eye is
-      not drawn moving outward. If it turns out to be real, it is the smallest
-      of the three by a wide margin.
+      There is a sideways part too, and it goes the way most people guess
+      wrongly: <strong>inward</strong>. The superior rectus is not only an
+      elevator — its secondary action is <strong>adduction</strong> — so the
+      recruitment that lifts the eye also pulls it toward the nose, and the
+      correction of record carries <span class="num">1&thinsp;&Delta;</span>
+      <strong>base-out</strong>, which is what an inward deviation is given.
+    </p>
+    <p>
+      It is now drawn, at the same true scale as the rise so the two stay in
+      proportion — and the result is that you can barely see it. That is the
+      honest picture. The horizontal came out around
+      <span class="num">1&thinsp;&Delta;</span> and inconsistently:
+      <span class="num">0.61</span>, <span class="num">2.48</span>,
+      <span class="num">0.00</span> across the same three runs, against
+      <span class="num">8&thinsp;&Delta;</span> of vertical. An eighth of the
+      rise is about half a pixel of travel, so the number is printed beside the
+      eye rather than left to the drawing. Exaggerating it until it showed would
+      have made the smallest of the three components look like one of the big
+      ones, and it may yet be nothing at all.
     </p>
     </section>
     <section class="chunk">
@@ -893,11 +911,13 @@
     ctx.beginPath(); ctx.arc(0, 62, 22, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke();
 
     // eyes. Subject's RIGHT eye is on OUR left.
-    // the right eye rides up by the vertical deviation (magnified to be seen)
-    var rise = pupilRisePx(phi);
+    // the right eye rides up by the vertical deviation and in by the horizontal
+    // one (both magnified equally, so their proportion survives)
+    var rise = pupilRisePx(phi), shift = pupilShiftPx(phi);
 
-    drawEye(ctx, -46, -14, od, torsionOD(), rise);
-    drawEye(ctx,  46, -14, os, torsionOS(), 0);
+    // OD sits left of the nose, so nasal is +x for it; OS is undeviated.
+    drawEye(ctx, -46, -14, od, torsionOD(), rise, shift);
+    drawEye(ctx,  46, -14, os, torsionOS(), 0, 0);
 
     // ---- how high the right eye sits, IN THE HEAD'S FRAME.
     //
@@ -912,34 +932,53 @@
     ctx.strokeStyle = css("--warn"); ctx.globalAlpha = .6; ctx.lineWidth = 1.2;
     ctx.setLineDash([4, 4]);
     ctx.beginPath(); ctx.moveTo(-92, -14); ctx.lineTo(84, -14); ctx.stroke();
+    // and the column it would sit in if it were not pulled toward the nose, so
+    // the sideways half has something to be measured against too
+    ctx.beginPath(); ctx.moveTo(-46, -56); ctx.lineTo(-46, 26); ctx.stroke();
     ctx.setLineDash([]); ctx.globalAlpha = 1;
 
-    if (rise > 3) {
-      ctx.strokeStyle = css("--warn"); ctx.lineWidth = 2.2;
+    // At true scale the rise tops out at 4.8 px, so the arrowhead is sized to
+    // the arrow rather than fixed — a 6 px head on a 2 px shaft reads as a
+    // glitch. There is deliberately no matching arrow for the sideways drift:
+    // it is under a pixel everywhere, and an arrow drawn long enough to see
+    // would be the exaggeration this panel just gave up. The dashed column and
+    // the printed number carry it instead.
+    if (rise > 1.2) {
+      var head = Math.min(4.5, rise * 0.8);
+      ctx.strokeStyle = css("--warn"); ctx.lineWidth = 1.8;
       ctx.beginPath(); ctx.moveTo(-92, -14); ctx.lineTo(-92, -14 - rise); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-96, -14 - rise + 6);
-      ctx.lineTo(-92, -14 - rise); ctx.lineTo(-88, -14 - rise + 6); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-92 - head * 0.7, -14 - rise + head);
+      ctx.lineTo(-92, -14 - rise);
+      ctx.lineTo(-92 + head * 0.7, -14 - rise + head); ctx.stroke();
     }
     // both pupil centres marked on the reference, so the gap is unambiguous
     ctx.fillStyle = od;
-    ctx.beginPath(); ctx.arc(-46, -14 - rise, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(-46 + shift, -14 - rise, 2.6, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = os;
     ctx.beginPath(); ctx.arc(46, -14, 3, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
 
-    // the number itself is placed by the same transform but drawn UNROTATED,
-    // because text at 50 degrees is not readable
-    if (rise > 3) {
+    // The numbers themselves are placed by the same transform but drawn
+    // UNROTATED, because text at 50 degrees is not readable. Always drawn now,
+    // at every roll: with the exaggeration gone the displacement is a couple of
+    // pixels, so the printed figure IS the measurement — hiding it below some
+    // threshold would leave the panel saying nothing where it used to shout.
+    {
       var cosr = Math.cos(rad), sinr = Math.sin(rad);
       var at = function (ex, ey) {
         var ly = ey - 78;
         return { x: cx + (ex * cosr - ly * sinr),
                  y: cy + 78 + (ex * sinr + ly * cosr) };
       };
-      var mid = at(-100, -14 - rise / 2);
+      // clear of the rise arrow at x = -92: two stacked lines are wider than
+      // the one this used to be, and they were sitting on top of it
+      var mid = at(-126, -14 - rise / 2);
       ctx.fillStyle = css("--warn"); ctx.font = "600 12px " + css("--mono");
       ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.fillText(verticalD(phi).toFixed(1) + "\u0394 higher", mid.x, mid.y);
+      // both axes, because the sideways one is too small to read off the
+      // drawing \u2014 stating it is the only way it gets seen at all
+      ctx.fillText(verticalD(phi).toFixed(1) + "\u0394 up", mid.x, mid.y - 8);
+      ctx.fillText(horizontalD(phi).toFixed(1) + "\u0394 in", mid.x, mid.y + 8);
       ctx.textBaseline = "alphabetic";
     }
 
@@ -979,50 +1018,68 @@
   function verticalD(p) {
     return VERT_LEVEL_D * (mismatch(p) / mismatch(0));
   }
-  // Eye displacement is magnified to be visible at all: the deviation is a few
-  // degrees, the eye is 27 px, and the head swings the eyes hundreds of pixels
-  // either way. Without magnification the difference between the eyes is about
-  // fifteen pixels against that, and invisible.
-  // HOW FAR THE PUPIL ACTUALLY MOVES — this was a unit error, not a taste one.
+  // AND IT ALSO DRIFTS IN — same recruitment, third consequence, weakest
+  // evidence of the three.
   //
-  // The old line was `rise = degrees * MAG * 0.9`, which quietly treats one
-  // degree of eye rotation as ~0.9 px. It is not. A pupil rides along the
-  // globe's surface, so for a rotation theta it displaces by R*sin(theta) —
-  // with R = 27 px here, that is 0.47 px per degree. The old formula was
-  // therefore drawing every rise at 1.9x life size before any deliberate
-  // exaggeration was applied on top, which is why it looked wrong.
+  // The superior rectus is not only an elevator: its secondary action is
+  // ADDUCTION. So the same call on the SR that lifts the eye also pulls it
+  // toward the nose, and the correction of record carries 1.00 D base-out —
+  // base-out being what an ESO (inward) deviation is given. The eye therefore
+  // drifts nasally, not outward.
   //
-  // Now the geometry is computed properly and the exaggeration is a single
-  // honest multiplier. 2x is the most the drawing can take: the iris is 13 px
-  // in a globe whose half-height is 22.1, so the pupil centre may rise 9.1 px
-  // before the iris starts leaving the globe, and the worst true rise is
-  // 4.8 px. At 2x the extreme lands at 9.6 — just touching, never escaping.
-  var EYE_MAG = 2;
+  // Scaled exactly like the vertical, and no better known: 0.61, 2.48 and 0.00
+  // dialled across three runs at head LEVEL, never once measured across roll.
+  // It is about an EIGHTH of the vertical, which is why the pupil's sideways
+  // travel is a hair's width beside its rise — that ratio is the finding.
+  function horizontalD(p) {
+    return HORIZ_D * (mismatch(p) / mismatch(0));
+  }
+  // HOW FAR THE PUPIL ACTUALLY MOVES — life size, and NOT exaggerated.
+  //
+  // A pupil rides along the globe's surface, so for a rotation theta it
+  // displaces by R*sin(theta); with R = 27 px that is 0.47 px per degree. There
+  // was a 2x multiplier here to make the rise easier to see. It is gone. A
+  // drawing that magnifies one axis is no longer a drawing of the measurement,
+  // and the moment a second axis arrived — the nasal drift, an eighth the size
+  // — any factor became a choice about which component looks important. So both
+  // axes are drawn at true scale and the numbers are printed beside the eye.
+  //
+  // What that costs: at head level the rise is 2.2 px and the drift 0.3 px; at
+  // 50 deg of right roll, 4.8 px and 0.6 px. Small. The dashed reference lines
+  // and the ghost iris are what make them legible, not size.
   var GLOBE_R = 27;
   function pupilRisePx(p) {
-    return GLOBE_R * Math.sin(verticalD(p) * D2DEG * Math.PI / 180) * EYE_MAG;
+    return GLOBE_R * Math.sin(verticalD(p) * D2DEG * Math.PI / 180);
+  }
+  // Sideways travel, same geometry, same true scale, so the eighth-of-the-rise
+  // proportion survives into the drawing. Positive = toward the nose.
+  function pupilShiftPx(p) {
+    return GLOBE_R * Math.sin(horizontalD(p) * D2DEG * Math.PI / 180);
   }
 
-  function drawEye(ctx, x, y, colour, torsDeg, rise) {
+  function drawEye(ctx, x, y, colour, torsDeg, rise, shift) {
     var R = 27;
     rise = rise || 0;
+    shift = shift || 0;
     ctx.save(); ctx.translate(x, y);
     // the globe — fixed in the orbit, as a real one is
     ctx.fillStyle = css("--panel-2"); ctx.strokeStyle = css("--dim"); ctx.lineWidth = 1.3;
     ctx.beginPath(); ctx.ellipse(0, 0, R, R * 0.82, 0, 0, Math.PI * 2);
     ctx.fill(); ctx.stroke();
-    // where the pupil would sit if this eye were not deviated
-    if (rise > 2) {
+    // Where the pupil would sit if this eye were not deviated. Drawn for any
+    // deviation at all, because at true scale it is the ghost — not the size of
+    // the move — that makes a two-pixel offset readable.
+    if (Math.hypot(shift, rise) > 0.5) {
       ctx.strokeStyle = css("--dimmer"); ctx.globalAlpha = .6; ctx.lineWidth = 1;
       ctx.setLineDash([2, 3]);
       ctx.beginPath(); ctx.arc(0, 0, 13, 0, Math.PI * 2); ctx.stroke();
       ctx.setLineDash([]); ctx.globalAlpha = 1;
     }
-    // the pupil rides up inside the globe; nothing may leave it
+    // the pupil rides up and in inside the globe; nothing may leave it
     ctx.save();
     ctx.beginPath(); ctx.ellipse(0, 0, R - 1, R * 0.82 - 1, 0, 0, Math.PI * 2);
     ctx.clip();
-    ctx.translate(0, -rise);
+    ctx.translate(shift, -rise);
 
     // where the marker OUGHT to sit (the sound eye's orientation)
     ctx.save(); ctx.rotate(torsionOS() * Math.PI / 180);
@@ -1303,13 +1360,11 @@
   }
 
   function render() {
-    // No magnification factor in the label. It is a drawing decision, not a
-    // finding, and printing it invited the reader to work out what the real
-    // number was — while the arrow beside the eye already prints exactly that,
-    // in prism dioptres. Two hand-typed copies of the factor had also gone
-    // stale by this point, which is its own argument for not stating it twice.
+    // There is no magnification factor left to state: the eye displacement is
+    // drawn life size on both axes. The label says what the marker means and
+    // how well it is known, which is the part a reader cannot work out.
     var ml = document.getElementById("magLabel");
-    if (ml) ml.textContent = "Pupil rise — predicted, never measured";
+    if (ml) ml.textContent = "Pupil rise and nasal drift — predicted, never measured";
     drawHead(); drawRetina(); drawCurve(); drawMeter(); drawComponents();
     drawHorizon($("sceneL"), "L");
     drawHorizon($("sceneR"), "R");
