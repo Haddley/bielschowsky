@@ -293,7 +293,17 @@
   }
   .comp-foot b { color: var(--ink); font-weight: 600; }
 
-  .prose { font-family: var(--serif); font-size: 16.5px; line-height: 1.68; max-width: 66ch; }
+  /* Deliberately ONE column, and centred rather than left-hugging.
+     Prose stays near 66 characters because that is the readable measure; the
+     empty space is the point, not a gap to fill. Real CSS columns would be
+     worse here — a reader would reach the bottom of column one and have to
+     scroll back up for column two, which is what print gets away with and the
+     web does not. */
+  .prose {
+    font-family: var(--serif); font-size: 16.5px; line-height: 1.68;
+    max-width: 66ch; margin-inline: auto;
+  }
+  .prose > h3:first-child { margin-top: 8px; }
   .prose h3 {
     font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
     color: var(--dim); margin: 34px 0 10px; font-weight: 600;
