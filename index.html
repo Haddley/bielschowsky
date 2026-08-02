@@ -1047,10 +1047,13 @@
   }
 
   function render() {
-    // written from the constant, because a hand-typed "×3" survived a change to
-    // 6 and told the reader something false
+    // No magnification factor in the label. It is a drawing decision, not a
+    // finding, and printing it invited the reader to work out what the real
+    // number was — while the arrow beside the eye already prints exactly that,
+    // in prism dioptres. Two hand-typed copies of the factor had also gone
+    // stale by this point, which is its own argument for not stating it twice.
     var ml = document.getElementById("magLabel");
-    if (ml) ml.textContent = "Pupil rise — predicted, ×" + EYE_MAG;
+    if (ml) ml.textContent = "Pupil rise — predicted, never measured";
     drawHead(); drawRetina(); drawCurve(); drawMeter(); drawComponents();
     drawHorizon($("sceneL"), "L");
     drawHorizon($("sceneR"), "R");
