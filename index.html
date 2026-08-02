@@ -651,8 +651,7 @@
 
     // eyes. Subject's RIGHT eye is on OUR left.
     // the right eye rides up by the vertical deviation (magnified to be seen)
-    var riseDeg = verticalD(phi) * D2DEG;
-    var rise = riseDeg * EYE_MAG * 0.9;
+    var rise = pupilRisePx(phi);
 
     drawEye(ctx, -46, -14, od, torsionOD(), rise);
     drawEye(ctx,  46, -14, os, torsionOS(), 0);
@@ -741,11 +740,25 @@
   // degrees, the eye is 27 px, and the head swings the eyes hundreds of pixels
   // either way. Without magnification the difference between the eyes is about
   // fifteen pixels against that, and invisible.
-  // At x6 the whole eyeball floated clear of its socket, which is not what an
-  // eye does. The globe stays where it is and the PUPIL moves — so the sclera
-  // is drawn fixed, the iris rides up inside it, and the exaggeration can stay
-  // modest because the arrow and the number carry the precision.
+  // HOW FAR THE PUPIL ACTUALLY MOVES — this was a unit error, not a taste one.
+  //
+  // The old line was `rise = degrees * MAG * 0.9`, which quietly treats one
+  // degree of eye rotation as ~0.9 px. It is not. A pupil rides along the
+  // globe's surface, so for a rotation theta it displaces by R*sin(theta) —
+  // with R = 27 px here, that is 0.47 px per degree. The old formula was
+  // therefore drawing every rise at 1.9x life size before any deliberate
+  // exaggeration was applied on top, which is why it looked wrong.
+  //
+  // Now the geometry is computed properly and the exaggeration is a single
+  // honest multiplier. 2x is the most the drawing can take: the iris is 13 px
+  // in a globe whose half-height is 22.1, so the pupil centre may rise 9.1 px
+  // before the iris starts leaving the globe, and the worst true rise is
+  // 4.8 px. At 2x the extreme lands at 9.6 — just touching, never escaping.
   var EYE_MAG = 2;
+  var GLOBE_R = 27;
+  function pupilRisePx(p) {
+    return GLOBE_R * Math.sin(verticalD(p) * D2DEG * Math.PI / 180) * EYE_MAG;
+  }
 
   function drawEye(ctx, x, y, colour, torsDeg, rise) {
     var R = 27;
