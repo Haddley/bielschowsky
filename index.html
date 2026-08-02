@@ -314,22 +314,45 @@
      worse here — a reader would reach the bottom of column one and have to
      scroll back up for column two, which is what print gets away with and the
      web does not. */
-  /* TWO COLUMNS, not one ribbon. The 66-character measure applies to each
-     COLUMN, not to the page — capping the whole block at 66ch left a thin strip
-     of prose under full-width panels, which read as a layout fault because it
-     was one.
-     Real CSS columns would still be wrong (you reach the foot of column one and
-     scroll back up for column two). A grid of self-contained sections is not:
-     each is a complete thought, so reading left-then-right never breaks a
-     sentence across a scroll. */
+  /* ONE flowing column of prose, with a reference rail beside it.
+     Two earlier attempts were both wrong. A single centred 66ch column under
+     full-width panels read as a layout fault. Splitting the sections into a
+     2-up grid was worse: they are wildly different lengths, so short ones left
+     craters, and the eye had to zig-zag left-right-left down the page.
+     The empty space never needed dividing — it needed a job. */
   .prose {
-    font-family: var(--serif); font-size: 16.5px; line-height: 1.68;
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-    gap: 4px 44px; align-items: start;
+    display: grid; grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 0 48px; align-items: start;
   }
-  .chunk { break-inside: avoid; }
-  .chunk > h3:first-child { margin-top: 22px; }
-  .prose > p { grid-column: 1 / -1; max-width: 68ch; }
+  .prose-body {
+    font-family: var(--serif); font-size: 16.5px; line-height: 1.68;
+    max-width: 68ch; min-width: 0;
+  }
+  .chunk > h3:first-child { margin-top: 30px; }
+  .chunk:first-child > h3:first-child { margin-top: 4px; }
+  .rail { position: sticky; top: 24px; }
+  .rail h4 {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--dim); margin: 0 0 12px; font-weight: 600;
+  }
+  .rail dl {
+    margin: 0 0 22px; display: grid; grid-template-columns: 1fr auto;
+    gap: 7px 12px; align-items: baseline;
+  }
+  .rail dt { font-family: var(--serif); font-size: 13.5px; color: var(--dim); }
+  .rail dd {
+    margin: 0; font-family: var(--mono); font-size: 13.5px; color: var(--ink);
+    font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap;
+  }
+  .rail .note {
+    font-family: var(--serif); font-size: 12.5px; line-height: 1.5;
+    color: var(--dimmer); margin: 0; padding-top: 14px;
+    border-top: 1px solid var(--rule);
+  }
+  @media (max-width: 900px) {
+    .prose { grid-template-columns: 1fr; }
+    .rail { position: static; margin-top: 30px; }
+  }
   .prose h3 {
     font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
     color: var(--dim); margin: 34px 0 10px; font-weight: 600;
@@ -597,6 +620,7 @@
   </div>
 
   <div class="prose">
+    <div class="prose-body">
     <section class="chunk">
       <h3>What the Bielschowsky test is</h3>
     <p>
@@ -733,6 +757,32 @@
       correction on above and watch the two images come back together.
     </p>
     </section>
+    </div>
+
+    <aside class="rail">
+      <h4>At a glance</h4>
+      <dl>
+        <dt>Rotation, left shoulder</dt><dd>~3&deg;</dd>
+        <dt>Rotation, head level</dt><dd>5.5&deg;</dd>
+        <dt>Rotation, right shoulder</dt><dd>9&ndash;11.5&deg;</dd>
+        <dt>Fusion range</dt><dd>&plusmn;3.5&deg;</dd>
+        <dt>Vertical, level</dt><dd>8&thinsp;&Delta;</dd>
+        <dt>Horizontal</dt><dd>~1&thinsp;&Delta;</dd>
+      </dl>
+      <h4>How well known</h4>
+      <dl>
+        <dt>Rotation vs head roll</dt><dd>measured</dd>
+        <dt>Vertical, at level</dt><dd>measured</dd>
+        <dt>Vertical vs head roll</dt><dd>assumed</dd>
+        <dt>Anything vs gaze</dt><dd>a lead</dd>
+        <dt>Does it help?</dt><dd>untested</dd>
+      </dl>
+      <p class="note">
+        One person, four sessions, one day. Fifteen corrections dialled by hand.
+        The sign of the tilt is the subject&rsquo;s report &mdash; no tracker
+        measures cyclotorsion.
+      </p>
+    </aside>
   </div>
 
   <footer>
