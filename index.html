@@ -289,7 +289,7 @@
         <span><i class="swatch" style="background:var(--os)"></i>Left eye · OS</span>
         <span><i class="swatch" style="background:var(--od)"></i>Right eye · OD · palsied</span>
         <span><i class="swatch" style="background:var(--dimmer)"></i>Where it should be</span>
-        <span><i class="swatch" style="background:var(--warn)"></i>Elevation &mdash; predicted, ×3</span>
+        <span><i class="swatch" style="background:var(--warn)"></i><span id="magLabel">Elevation</span></span>
       </div>
     </div>
 
@@ -651,7 +651,7 @@
     var riseDeg = verticalD(phi) * D2DEG;
     var rise = riseDeg * EYE_MAG * 0.9;
 
-    drawEye(ctx, -46, -14 - rise, od, torsionOD(), rise);
+    drawEye(ctx, -46, -14, od, torsionOD(), rise);
     drawEye(ctx,  46, -14, os, torsionOS(), 0);
 
     // ---- how high the right eye sits, IN THE HEAD'S FRAME.
@@ -677,7 +677,7 @@
     }
     // both pupil centres marked on the reference, so the gap is unambiguous
     ctx.fillStyle = od;
-    ctx.beginPath(); ctx.arc(-46, -14 - rise, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(-46, -14 - rise, 2.6, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = os;
     ctx.beginPath(); ctx.arc(46, -14, 3, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
@@ -738,22 +738,32 @@
   // degrees, the eye is 27 px, and the head swings the eyes hundreds of pixels
   // either way. Without magnification the difference between the eyes is about
   // fifteen pixels against that, and invisible.
-  var EYE_MAG = 6;
+  // At x6 the whole eyeball floated clear of its socket, which is not what an
+  // eye does. The globe stays where it is and the PUPIL moves — so the sclera
+  // is drawn fixed, the iris rides up inside it, and the exaggeration can stay
+  // modest because the arrow and the number carry the precision.
+  var EYE_MAG = 2;
 
   function drawEye(ctx, x, y, colour, torsDeg, rise) {
     var R = 27;
+    rise = rise || 0;
     ctx.save(); ctx.translate(x, y);
-    // where this eye would sit with no deviation
-    if (rise > 2) {
-      ctx.strokeStyle = css("--dimmer"); ctx.globalAlpha = .55; ctx.lineWidth = 1;
-      ctx.setLineDash([2, 3]);
-      ctx.beginPath(); ctx.ellipse(0, rise, R, R * 0.82, 0, 0, Math.PI * 2); ctx.stroke();
-      ctx.setLineDash([]); ctx.globalAlpha = 1;
-    }
-    // sclera
+    // the globe — fixed in the orbit, as a real one is
     ctx.fillStyle = css("--panel-2"); ctx.strokeStyle = css("--dim"); ctx.lineWidth = 1.3;
     ctx.beginPath(); ctx.ellipse(0, 0, R, R * 0.82, 0, 0, Math.PI * 2);
     ctx.fill(); ctx.stroke();
+    // where the pupil would sit if this eye were not deviated
+    if (rise > 2) {
+      ctx.strokeStyle = css("--dimmer"); ctx.globalAlpha = .6; ctx.lineWidth = 1;
+      ctx.setLineDash([2, 3]);
+      ctx.beginPath(); ctx.arc(0, 0, 13, 0, Math.PI * 2); ctx.stroke();
+      ctx.setLineDash([]); ctx.globalAlpha = 1;
+    }
+    // the pupil rides up inside the globe; nothing may leave it
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(0, 0, R - 1, R * 0.82 - 1, 0, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.translate(0, -rise);
 
     // where the marker OUGHT to sit (the sound eye's orientation)
     ctx.save(); ctx.rotate(torsionOS() * Math.PI / 180);
@@ -772,6 +782,7 @@
     ctx.beginPath(); ctx.arc(0, -R * 1.42, 3.6, 0, Math.PI * 2); ctx.fill();
     ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
+    ctx.restore();   // un-clip
     ctx.restore();
   }
 
@@ -1033,6 +1044,10 @@
   }
 
   function render() {
+    // written from the constant, because a hand-typed "×3" survived a change to
+    // 6 and told the reader something false
+    var ml = document.getElementById("magLabel");
+    if (ml) ml.textContent = "Pupil rise — predicted, ×" + EYE_MAG;
     drawHead(); drawRetina(); drawCurve(); drawMeter(); drawComponents();
     drawHorizon($("sceneL"), "L");
     drawHorizon($("sceneR"), "R");
