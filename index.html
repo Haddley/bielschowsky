@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="What the Bielschowsky head-tilt test is, why a right fourth-nerve palsy is worse tilting one way, and the one component of the correction only a headset can deliver. Work in progress, n=1.">
+<meta name="description" content="Run the Bielschowsky three-step test and see why a right fourth-nerve palsy is worse tilting one way — plus the one component of the correction only a headset can deliver. Work in progress, n=1.">
 <meta name="color-scheme" content="dark light">
 <title>Between the shoulders — right superior oblique palsy</title>
 <style>
@@ -146,6 +146,50 @@
   .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 13px; font-size: 12px; }
   .legend span { display: inline-flex; align-items: center; gap: 7px; color: var(--dim); }
   .swatch { width: 11px; height: 11px; border-radius: 2px; flex: none; }
+
+  .threestep { margin-bottom: 20px; }
+  .steps {
+    list-style: none; counter-reset: step; margin: 0; padding: 0;
+    display: flex; flex-direction: column;
+  }
+  .steps li {
+    counter-increment: step; position: relative;
+    padding: 14px 0 14px 42px; border-top: 1px solid var(--rule);
+  }
+  .steps li:first-child { border-top: none; padding-top: 4px; }
+  .steps li::before {
+    content: counter(step); position: absolute; left: 0; top: 14px;
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 1px solid var(--rule); background: var(--panel-2);
+    display: grid; place-items: center;
+    font-size: 12px; font-weight: 600; color: var(--dim);
+    font-variant-numeric: tabular-nums;
+  }
+  .steps li:first-child::before { top: 4px; }
+  .step-h {
+    display: flex; flex-wrap: wrap; gap: 10px 16px;
+    align-items: center; justify-content: space-between;
+  }
+  .step-q { font-size: 14px; color: var(--ink); font-weight: 500; }
+  .step-btns { display: flex; gap: 8px; }
+  .steps button { padding: 7px 13px; font-size: 11px; }
+  .step-a {
+    margin: 9px 0 0; font-family: var(--serif); font-size: 14.5px;
+    line-height: 1.55; color: var(--ink); max-width: 74ch;
+  }
+  .step-a.muted { color: var(--dim); }
+  .step-a b { font-family: var(--mono); font-size: 13px; }
+  .step-a em { color: var(--ink); }
+  .verdict-line {
+    margin: 16px 0 0; padding-top: 15px; border-top: 1px solid var(--rule);
+    font-family: var(--serif); font-size: 15px; line-height: 1.6;
+    color: var(--dim); max-width: 74ch;
+  }
+  .verdict-line b { color: var(--ink); font-family: var(--mono); font-size: 14px; }
+  .step-foot {
+    margin: 10px 0 0; font-size: 12px; color: var(--dimmer);
+    font-family: var(--serif); max-width: 74ch;
+  }
 
   .scene-row {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
@@ -306,6 +350,57 @@
     </div>
     <button id="play" type="button" aria-pressed="false">Sweep</button>
     <button id="corr" type="button" aria-pressed="false">Correction: off</button>
+  </div>
+
+  <div class="card threestep">
+    <h2>Run the three-step test</h2>
+    <p class="sub">
+      The examination itself, driven by this subject&rsquo;s measurements. Each
+      step halves the field of candidate muscles; after three, one is left.
+    </p>
+
+    <ol class="steps">
+      <li>
+        <div class="step-h">
+          <span class="step-q">With the head straight, which eye sits higher?</span>
+          <button type="button" data-roll="0">Head straight</button>
+        </div>
+        <p class="step-a" id="step1">&nbsp;</p>
+      </li>
+      <li>
+        <div class="step-h">
+          <span class="step-q">Is it worse looking left, or looking right?</span>
+          <span class="chip weak">Not modelled here</span>
+        </div>
+        <p class="step-a muted">
+          Expected worse in <b>left</b> gaze &mdash; the right eye adducted, where
+          the superior oblique does most of its lifting work. This rig measures
+          torsion across gaze but has never measured the <em>vertical</em> across
+          gaze, so the page states this step rather than demonstrating it.
+        </p>
+      </li>
+      <li>
+        <div class="step-h">
+          <span class="step-q">Is it worse tilting toward one shoulder?</span>
+          <span class="step-btns">
+            <button type="button" data-roll="35">Tilt left</button>
+            <button type="button" data-roll="-35">Tilt right</button>
+          </span>
+        </div>
+        <p class="step-a" id="step3">&nbsp;</p>
+      </li>
+    </ol>
+
+    <p class="verdict-line">
+      <span class="chip ok">Result</span>
+      Higher right eye, worse in left gaze, worse tilting right &mdash;
+      <b>right superior oblique.</b> The three steps only ever point at one
+      muscle, which is why the test survives with no equipment at all.
+    </p>
+    <p class="step-foot">
+      This demonstrates the test on one person&rsquo;s measurements. It does not
+      perform one, and it cannot tell you anything about your own eyes.
+    </p>
   </div>
 
   <div class="stage">
@@ -1192,6 +1287,39 @@
     render();
     requestAnimationFrame(tick);
   }
+
+  // ---- the three-step test drives the same simulation -------------------
+  var step3seen = {};
+  Array.prototype.forEach.call(document.querySelectorAll(".steps button"),
+    function (b) {
+      b.addEventListener("click", function () {
+        if (sweeping) stopSweep();
+        phi = parseFloat(b.dataset.roll);
+        rollEl.value = phi.toFixed(1);
+        render();
+        var v = verticalD(phi), t = mismatch(phi);
+        if (phi === 0) {
+          $("step1").innerHTML =
+            "The right eye sits <b>" + v.toFixed(1) + "&Delta;</b> higher, and its "
+            + "image is rotated <b>" + t.toFixed(1) + "&deg;</b> against the left. "
+            + "So: <em>right eye higher</em>. One step done, and already only the "
+            + "muscles that depress or intort the right eye are still in the frame.";
+        } else {
+          step3seen[phi > 0 ? "left" : "right"] = v;
+          var L = step3seen.left, R = step3seen.right;
+          $("step3").innerHTML = (phi > 0
+            ? "Tilting <em>left</em>: <b>" + v.toFixed(1) + "&Delta;</b>. "
+            : "Tilting <em>right</em>: <b>" + v.toFixed(1) + "&Delta;</b>. ")
+            + (L !== undefined && R !== undefined
+              ? "Left " + L.toFixed(1) + "&Delta; against right " + R.toFixed(1)
+                + "&Delta; &mdash; <em>clearly worse tilting right</em>, by "
+                + (R - L).toFixed(1) + "&Delta;. That is the positive Bielschowsky "
+                + "sign, and it is the step that separates the superior oblique "
+                + "from every other candidate."
+              : "Now try the other shoulder, so there is something to compare it to.");
+        }
+      });
+    });
 
   window.addEventListener("resize", render);
   if (window.matchMedia) {
