@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="How a right superior oblique (fourth nerve) palsy behaves as the head rolls between the shoulders, and how a headset can rotate one eye's image to compensate. An educational demonstration, n=1.">
+<meta name="description" content="What the Bielschowsky head-tilt test is, why a right fourth-nerve palsy is worse tilting one way, and the one component of the correction only a headset can deliver. Work in progress, n=1.">
 <meta name="color-scheme" content="dark light">
 <title>Between the shoulders — right superior oblique palsy</title>
 <style>
@@ -66,6 +66,22 @@
     max-width: 62ch; margin: 0;
   }
   .standfirst em { color: var(--ink); font-style: italic; }
+
+  .wip {
+    border: 1px solid color-mix(in srgb, var(--warn) 45%, var(--rule));
+    border-left: 3px solid var(--warn);
+    background: color-mix(in srgb, var(--warn) 7%, var(--panel));
+    border-radius: 4px; padding: 15px 18px; margin-bottom: 20px;
+  }
+  .wip-h {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--warn); font-weight: 600; margin: 0 0 8px;
+  }
+  .wip p:last-child {
+    margin: 0; font-family: var(--serif); font-size: 15px; line-height: 1.6;
+    color: var(--dim); max-width: 72ch;
+  }
+  .wip strong, .wip em { color: var(--ink); }
 
   .controls {
     display: flex; flex-wrap: wrap; gap: 18px 26px; align-items: center;
@@ -266,6 +282,19 @@
     </p>
   </header>
 
+  <div class="wip">
+    <p class="wip-h">Work in progress &mdash; and the numbers will move</p>
+    <p>
+      This is an open notebook, not a result. Everything here was measured in a
+      single day, on one person, by that person. The rotation figures come from
+      fifteen corrections dialled by hand; the vertical is measured at head
+      level only and <em>assumed</em> elsewhere; and whether applying the
+      correction actually helps has <strong>never been cleanly tested</strong>.
+      Expect these numbers to change as more sessions run &mdash; and if they
+      stop changing, that will be worth more than any of them.
+    </p>
+  </div>
+
   <div class="controls">
     <div class="slider-group">
       <label for="roll" class="eyebrow" style="margin:0">Head roll</label>
@@ -437,6 +466,44 @@
   </div>
 
   <div class="prose">
+    <h3>What the Bielschowsky test is</h3>
+    <p>
+      Alfred Bielschowsky described it in 1935, and it is still how a fourth
+      nerve palsy is identified in a clinic &mdash; usually as the third step of
+      a three-step examination. It needs no equipment at all.
+    </p>
+    <p>
+      <strong>Step one:</strong> with the head straight, which eye sits higher?
+      <strong>Step two:</strong> does that difference get worse looking left, or
+      looking right? <strong>Step three &mdash; the head tilt:</strong> does it
+      get worse with the head tipped toward one shoulder or the other? Each step
+      halves the field of candidate muscles, and after three steps one muscle is
+      left.
+    </p>
+    <p>
+      The third step is the clever one, and it is the step this page is about.
+      Tilting the head demands that the eyes <em>counter-roll</em> &mdash; and
+      intorting the right eye is a job shared by the superior oblique and the
+      superior rectus. When the superior oblique is weak, the superior rectus
+      has to supply the missing twist, and because it is also an
+      <strong>elevator</strong> the eye rises as a side effect. So the eye that
+      was already higher goes higher still.
+    </p>
+    <p>
+      A right superior oblique palsy therefore reads:
+      <strong>right eye higher, worse looking left, worse tilting right.</strong>
+      That last part is the positive Bielschowsky sign, and it is why a person
+      with this palsy holds their head toward the <em>other</em> shoulder without
+      ever being taught to.
+    </p>
+    <p>
+      What the page adds is resolution. In a clinic the third step is three head
+      positions and a judgement of &ldquo;worse&rdquo;. Here it is a continuous
+      sweep, and instead of a judgement the subject dials the image until it goes
+      single &mdash; so &ldquo;worse&rdquo; becomes a number of degrees, at every
+      angle in between.
+    </p>
+
     <h3>Why the right shoulder is the bad direction</h3>
     <p>
       When the head rolls, the otoliths command <strong>ocular counter-roll</strong> —

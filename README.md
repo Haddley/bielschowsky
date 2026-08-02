@@ -6,6 +6,37 @@ correction that only a head-mounted display can deliver.
 
 **→ [haddley.github.io/bielschowsky](https://haddley.github.io/bielschowsky/)**
 
+**Work in progress.** This is an open notebook, not a result: one person, one
+day, and the person is also the author. Expect the numbers to move.
+
+## What the Bielschowsky test is
+
+Described by Alfred Bielschowsky in 1935 and still how a fourth nerve palsy is
+identified, usually as the third step of a three-step examination needing no
+equipment at all.
+
+1. Head straight — which eye sits higher?
+2. Does that get worse looking left, or right?
+3. **The head tilt** — does it get worse toward one shoulder or the other?
+
+Step three is the clever one. Tilting the head makes the eyes counter-roll, and
+intorting the right eye is shared between the superior oblique and the superior
+rectus. With the oblique weak, the rectus supplies the missing twist — and being
+an elevator, it lifts the eye as a side effect. The eye that was already higher
+goes higher still.
+
+A right superior oblique palsy reads: **right eye higher, worse looking left,
+worse tilting right.** That last part is the positive sign, and it is why
+someone with this palsy holds their head toward the *other* shoulder without
+ever being taught to.
+
+This page adds resolution. In a clinic that third step is three head positions
+and a judgement of "worse". Here it is a continuous sweep, and instead of a
+judgement the subject dials the image until it goes single — so "worse" becomes
+a number of degrees, at every angle in between.
+
+## What you are looking at
+
 Roll the head and four things move together:
 
 - **both eyes' torsional orientation**, against where they ought to sit — the
