@@ -651,24 +651,52 @@
     var riseDeg = verticalD(phi) * D2DEG;
     var rise = riseDeg * EYE_MAG * 0.9;
 
-    // a level reference between the two pupils makes the height difference
-    // readable the way a clinician reads it on cover test
-    ctx.strokeStyle = css("--warn"); ctx.globalAlpha = .5; ctx.lineWidth = 1;
-    ctx.setLineDash([3, 3]);
-    ctx.beginPath(); ctx.moveTo(-84, -14); ctx.lineTo(84, -14); ctx.stroke();
-    ctx.setLineDash([]); ctx.globalAlpha = 1;
-
     drawEye(ctx, -46, -14 - rise, od, torsionOD(), rise);
     drawEye(ctx,  46, -14, os, torsionOS(), 0);
 
-    // the gap itself, called out
-    if (rise > 2) {
-      ctx.strokeStyle = css("--warn"); ctx.lineWidth = 1.4;
-      ctx.beginPath(); ctx.moveTo(-88, -14); ctx.lineTo(-88, -14 - rise); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-91, -14 - rise + 3); ctx.lineTo(-88, -14 - rise);
-      ctx.lineTo(-85, -14 - rise + 3); ctx.stroke();
+    // ---- how high the right eye sits, IN THE HEAD'S FRAME.
+    //
+    // This was briefly drawn in the world frame, on the reasoning that a level
+    // line is what a clinician judges against. That is wrong, and the numbers
+    // said so: rolling 50 deg onto the right shoulder carries the right eye
+    // DOWN the screen faster than the deficit lifts it, so a world-frame
+    // readout announces "the right eye is lower" at exactly the posture where
+    // the deviation is worst. A hypertropia is the misalignment BETWEEN the two
+    // eyes — a head-frame quantity — which is why a cover test fixes the head
+    // first. So the reference belongs inside the rotation, with the head.
+    ctx.strokeStyle = css("--warn"); ctx.globalAlpha = .6; ctx.lineWidth = 1.2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(-92, -14); ctx.lineTo(84, -14); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+
+    if (rise > 3) {
+      ctx.strokeStyle = css("--warn"); ctx.lineWidth = 2.2;
+      ctx.beginPath(); ctx.moveTo(-92, -14); ctx.lineTo(-92, -14 - rise); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-96, -14 - rise + 6);
+      ctx.lineTo(-92, -14 - rise); ctx.lineTo(-88, -14 - rise + 6); ctx.stroke();
     }
+    // both pupil centres marked on the reference, so the gap is unambiguous
+    ctx.fillStyle = od;
+    ctx.beginPath(); ctx.arc(-46, -14 - rise, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = os;
+    ctx.beginPath(); ctx.arc(46, -14, 3, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
+
+    // the number itself is placed by the same transform but drawn UNROTATED,
+    // because text at 50 degrees is not readable
+    if (rise > 3) {
+      var cosr = Math.cos(rad), sinr = Math.sin(rad);
+      var at = function (ex, ey) {
+        var ly = ey - 78;
+        return { x: cx + (ex * cosr - ly * sinr),
+                 y: cy + 78 + (ex * sinr + ly * cosr) };
+      };
+      var mid = at(-100, -14 - rise / 2);
+      ctx.fillStyle = css("--warn"); ctx.font = "600 12px " + css("--mono");
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(verticalD(phi).toFixed(1) + "\u0394 higher", mid.x, mid.y);
+      ctx.textBaseline = "alphabetic";
+    }
 
     // labels, unrotated so they stay readable
     ctx.font = "10px " + css("--mono"); ctx.textAlign = "center";
@@ -706,7 +734,11 @@
   function verticalD(p) {
     return VERT_LEVEL_D * (mismatch(p) / mismatch(0));
   }
-  var EYE_MAG = 3;   // eye displacement is magnified this much to be visible
+  // Eye displacement is magnified to be visible at all: the deviation is a few
+  // degrees, the eye is 27 px, and the head swings the eyes hundreds of pixels
+  // either way. Without magnification the difference between the eyes is about
+  // fifteen pixels against that, and invisible.
+  var EYE_MAG = 6;
 
   function drawEye(ctx, x, y, colour, torsDeg, rise) {
     var R = 27;
