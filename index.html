@@ -52,7 +52,19 @@
   }
   .wrap { max-width: 1120px; margin: 0 auto; padding: 32px 20px 72px; }
 
-  header { border-bottom: 1px solid var(--rule); padding-bottom: 22px; margin-bottom: 26px; }
+  /* Title and standfirst sit side by side once there is room. Stacked, the
+     standfirst was a 62-character ribbon with half the page empty beside it. */
+  header {
+    border-bottom: 1px solid var(--rule); padding-bottom: 22px; margin-bottom: 26px;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px 48px; align-items: end;
+  }
+  header .eyebrow, header h1 { grid-column: 1; }
+  header .standfirst { grid-column: 2; grid-row: 1 / span 2; align-self: end; }
+  @media (max-width: 860px) {
+    header { grid-template-columns: 1fr; }
+    header .eyebrow, header h1, header .standfirst { grid-column: 1; grid-row: auto; }
+  }
   .eyebrow {
     font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
     color: var(--dim); margin: 0 0 10px;
@@ -63,7 +75,7 @@
   }
   .standfirst {
     font-family: var(--serif); font-size: 17px; line-height: 1.6; color: var(--dim);
-    max-width: 62ch; margin: 0;
+    margin: 0;
   }
   .standfirst em { color: var(--ink); font-style: italic; }
 
@@ -79,7 +91,10 @@
   }
   .wip p:last-child {
     margin: 0; font-family: var(--serif); font-size: 15px; line-height: 1.6;
-    color: var(--dim); max-width: 72ch;
+    color: var(--dim);
+  }
+  @media (min-width: 861px) {
+    .wip p:last-child { columns: 2; column-gap: 44px; }
   }
   .wip strong, .wip em { color: var(--ink); }
 
@@ -299,16 +314,27 @@
      worse here — a reader would reach the bottom of column one and have to
      scroll back up for column two, which is what print gets away with and the
      web does not. */
+  /* TWO COLUMNS, not one ribbon. The 66-character measure applies to each
+     COLUMN, not to the page — capping the whole block at 66ch left a thin strip
+     of prose under full-width panels, which read as a layout fault because it
+     was one.
+     Real CSS columns would still be wrong (you reach the foot of column one and
+     scroll back up for column two). A grid of self-contained sections is not:
+     each is a complete thought, so reading left-then-right never breaks a
+     sentence across a scroll. */
   .prose {
     font-family: var(--serif); font-size: 16.5px; line-height: 1.68;
-    max-width: 66ch; margin-inline: auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    gap: 4px 44px; align-items: start;
   }
-  .prose > h3:first-child { margin-top: 8px; }
+  .chunk { break-inside: avoid; }
+  .chunk > h3:first-child { margin-top: 22px; }
+  .prose > p { grid-column: 1 / -1; max-width: 68ch; }
   .prose h3 {
     font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
     color: var(--dim); margin: 34px 0 10px; font-weight: 600;
   }
-  .prose p { margin: 0 0 15px; }
+  .prose p { margin: 0 0 15px; max-width: 68ch; }
   .prose strong { color: var(--ink); font-weight: 600; }
   .prose .od-t { color: var(--od); font-weight: 600; }
   .prose .os-t { color: var(--os); font-weight: 600; }
@@ -571,7 +597,8 @@
   </div>
 
   <div class="prose">
-    <h3>What the Bielschowsky test is</h3>
+    <section class="chunk">
+      <h3>What the Bielschowsky test is</h3>
     <p>
       Alfred Bielschowsky described it in 1935, and it is still how a fourth
       nerve palsy is identified in a clinic &mdash; usually as the third step of
@@ -608,8 +635,9 @@
       single &mdash; so &ldquo;worse&rdquo; becomes a number of degrees, at every
       angle in between.
     </p>
-
-    <h3>Why the right shoulder is the bad direction</h3>
+    </section>
+    <section class="chunk">
+      <h3>Why the right shoulder is the bad direction</h3>
     <p>
       When the head rolls, the otoliths command <strong>ocular counter-roll</strong> —
       the eyes rotate against the head to keep the world upright. It is involuntary,
@@ -634,8 +662,9 @@
       that moves the mismatch back inside the fusion range, found without
       instruments, and paid for in neck.
     </p>
-
-    <h3>Which way it tilts is your report, not my arithmetic</h3>
+    </section>
+    <section class="chunk">
+      <h3>Which way it tilts is your report, not my arithmetic</h3>
     <p>
       No tracker made or sold measures the sign of cyclotorsion — it needs
       iris-pattern tracking, which no headset does. So the <em>direction</em> the
@@ -644,8 +673,9 @@
       testimony. That is worth stating plainly, because it is the one number on
       this page no instrument could have supplied.
     </p>
-
-    <h3>The eye rises as well as twists</h3>
+    </section>
+    <section class="chunk">
+      <h3>The eye rises as well as twists</h3>
     <p>
       To make up the missing intorsion the brain recruits the superior rectus —
       which is also an <strong>elevator</strong>. So the right eye lifts as it
@@ -675,8 +705,9 @@
       not drawn moving outward. If it turns out to be real, it is the smallest
       of the three by a wide margin.
     </p>
-
-    <h3>What the headset can do that a lens cannot</h3>
+    </section>
+    <section class="chunk">
+      <h3>What the headset can do that a lens cannot</h3>
     <p>
       A prism bends light up, down or sideways. <strong>No optic rotates a
       retinal image.</strong> That is why the torsional part of a fourth-nerve
@@ -701,6 +732,7 @@
       rising toward <span class="num">11°</span> at the right shoulder. Turn the
       correction on above and watch the two images come back together.
     </p>
+    </section>
   </div>
 
   <footer>
